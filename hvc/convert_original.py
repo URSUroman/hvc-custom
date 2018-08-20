@@ -95,18 +95,3 @@ def to_sap():
 
 def to_koumura():
     pass
-	
-	
-	
-def to_txt(songfile_name, pred_labels, clf_file, samp_freq, segment_params,
-              onsets_s, offsets_s, alternate_path=None):
-    current_dir = "C:\\Users\\Roman\\Documents\\Documents\\SyllablesClassification\\Koumura Data Set"
-    file_path = current_dir+'\Song_Data\\Test_Songs_predict\\'+(os.path.basename(songfile_name))[0:15]+'.txt'
-    file_to_write= open(file_path,"w+")
-    #print(type(pred_labels[0])) gives strings (str_)
-    nb_syls = onsets_s.shape[-1]	 
-    for i in range(0, nb_syls):
-        file_to_write.write("%d,%d,%s\n" % (samp_freq*onsets_s[i],samp_freq*offsets_s[i],pred_labels[i]))
-        
-    file_to_write.close
-

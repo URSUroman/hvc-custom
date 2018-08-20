@@ -500,4 +500,5 @@ def validate_yaml(config_path, extract_config_yaml):
             raise KeyError('key {} in extract is an invalid key'.
                             format(key))
 
+						
     return validated

@@ -5,8 +5,11 @@ from scipy.io import wavfile
 import scipy.signal
 from matplotlib.mlab import specgram
 
-from . import evfuncs, koumura
+import matplotlib.pyplot as plt
+
+from . import evfuncs, koumura, txt
 from .parse.ref_spect_params import refs_dict
+
 
 class WindowError(Exception):
     pass
@@ -465,7 +468,6 @@ def segment_song(amp,
 
     return onsets, offsets
 
-
 class syllable:
     """
     syllable object, returned by make_syl_spect.
@@ -595,6 +597,9 @@ class Song:
             raw_audio, samp_freq = evfuncs.load_cbin(filename)
         elif file_format == 'koumura':
             samp_freq, raw_audio = wavfile.read(filename)
+        elif file_format == 'txt':
+            samp_freq, raw_audio = wavfile.read(filename)
+            raw_audio = raw_audio.astype(float)
 
         self.rawAudio = raw_audio
         self.sampFreq = samp_freq
@@ -643,6 +648,22 @@ class Song:
                 self.offsets_Hz = song_dict['offsets']  # and offsets
                 self.onsets_s = self.onsets_Hz / self.sampFreq  # so need to convert to seconds
                 self.offsets_s = song_dict['offsets'] / self.sampFreq
+				
+            elif file_format == 'txt':
+                if annote_filename:
+                    song_dict = txt.load_song_annot(annote_filename)
+                else:
+                    try:
+                        song_dict = txt.load_song_annot(filename)
+                    except FileNotFoundError:
+                        print("Could not automatically find an annotation file for {}."
+                              .format(filename))
+                        raise
+                self.onsets_Hz = song_dict['onsets']  # in Koumura annotation.xml files, onsets given in Hz
+                self.offsets_Hz = song_dict['offsets']  # and offsets
+                self.onsets_s = self.onsets_Hz / self.sampFreq  # so need to convert to seconds
+                self.offsets_s = song_dict['offsets'] / self.sampFreq	
+				
 
             self.labels = song_dict['labels']
 
@@ -665,6 +686,8 @@ class Song:
                 amp = evfuncs.smooth_data(self.rawAudio,
                                           self.sampFreq,
                                           self.spectParams['freq_cutoffs'])
+
+				
             onsets, offsets = segment_song(amp,
                                            segment_params,
                                            samp_freq=self.sampFreq)
@@ -674,6 +697,46 @@ class Song:
             self.onsets_Hz = np.round(self.onsets_s * self.sampFreq).astype(int)
             self.offsets_Hz = np.round(self.offsets_s * self.sampFreq).astype(int)
             self.labels = '-' * len(onsets)
+			
+			
+            ###Test: plot segmented amp
+            ##
+            ##window =('hamming')
+            ##overlap = 64
+            ##nperseg = 1024
+            ##noverlap = nperseg-overlap
+            ##colormap = "jet"
+			##
+			##
+            ###Plot smoothed amplitude
+            ##plt.figure() 
+            ##x=np.arange(len(amp))
+            ##plt.plot(x,amp)
+            ##shpe = len(onsets)
+			##
+            ##print('nb_segmented_sysl: %d' % shpe)
+            ###Plot onsets and offsets
+            ##for i in range(0,shpe):
+            ##    plt.axvline(x=self.onsets_Hz[i])
+            ##    plt.axvline(x=self.offsets_Hz[i],color='r')
+            ##   
+            ###Compute and plot spectrogram
+            ##(f,t,sp)=scipy.signal.spectrogram(self.rawAudio, self.sampFreq, window, nperseg, noverlap, mode='complex')
+            ###sp_p=np.clip(abs(sp), 0, 0.004)
+            ##max_sp=np.amax(abs(sp))
+            ##plt.figure()
+            ##sp = sp/max_sp
+            ###plt.imshow(abs(sp_p), origin="lower", aspect="auto", cmap=colormap, interpolation="none")
+            ##plt.imshow(10*np.log10(np.square(abs(sp))), origin="lower", aspect="auto", cmap=colormap, interpolation="none")
+            ##plt.colorbar()
+            ##plt.show()
+            ##
+            ###End test
+			
+			
+			
+			
+			
 
     def set_syls_to_use(self, labels_to_use='all'):
         """

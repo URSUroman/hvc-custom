@@ -12,8 +12,6 @@ import yaml
 import numpy as np
 from sklearn.externals import joblib
 
-from scipy.io import wavfile
-
 # from hvc
 import hvc.featureextract
 from .parseconfig import parse_config
@@ -123,28 +121,14 @@ def predict(config_file):
                         onsets_s = ftr_file_dict['onsets_s'][these]
                         offsets_s = ftr_file_dict['offsets_s'][these]
                         segment_params = ftr_file_dict['segment_params']
-                        #samp_freq = ftr_file_dict['samp_freq'][these]
-                        samp_freq, raw_audio = wavfile.read(songfile_name)
 
-                        #hvc.convert.to_notmat(songfile_name,
-                        #                      pred_labels,
-                        #                      model_name,
-                        #                      samp_freq,
-                        #                      segment_params,
-                        #                      onsets_s,
-                        #                      offsets_s,
-                        #                      alternate_path=output_dir)
-						
-                        hvc.convert.to_txt(songfile_name,
+                        hvc.convert.to_notmat(songfile_name,
                                               pred_labels,
                                               model_name,
-                                              samp_freq,
+                                              32000,
                                               segment_params,
                                               onsets_s,
                                               offsets_s,
                                               alternate_path=output_dir)
-						
-						
-						
 
     os.chdir(home_dir)

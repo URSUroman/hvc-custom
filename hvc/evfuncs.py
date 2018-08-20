@@ -8,6 +8,11 @@ import numpy as np
 from scipy.io import loadmat
 import scipy.signal
 
+# Test
+import scipy as sp
+# End test
+
+
 #from hvc
 import hvc.audiofileIO
 
@@ -281,6 +286,21 @@ def bandpass_filtfilt(rawsong, samp_freq, freq_cutoffs=(500, 10000)):
     -------
     filtsong : ndarray
     """
+	
+    # Test versions libraries
+    #print(np.__version__)
+
+    #print(sp.__version__)
+
+    #Accessoirement, tu peux tester les 2 libraires:
+    ##np.test()
+    ##sp.test()
+
+    #Tu peux aussi tester quel BLAS / LAPACK est installé avec:
+    #np.show_config()
+    # End Test versions libraries
+	
+	
     if freq_cutoffs[0] <= 0:
         raise ValueError('Low frequency cutoff {} is invalid, '
                          'must be greater than zero.'
@@ -317,7 +337,8 @@ def bandpass_filtfilt(rawsong, samp_freq, freq_cutoffs=(500, 10000)):
     return filtsong
 
 
-def smooth_data(rawsong, samp_freq, freq_cutoffs=None, smooth_win=2):
+# Initial default for smooth_win = 2
+def smooth_data(rawsong, samp_freq, freq_cutoffs=None, smooth_win=10):
     """filter raw audio and smooth signal
     used to calculate amplitude.
 

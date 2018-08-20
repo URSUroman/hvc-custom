@@ -42,7 +42,6 @@ def _parse_helper(config_type, config_path, config_yaml):
     else:
         return parser_dict[config_type](config_path, config_yaml[config_type])
 
-
 def parse_config(config_file, config_type=None):
     """Parse configurations in YAML file.
     Each configuration type must be defined as a dictionary with a

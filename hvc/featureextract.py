@@ -150,6 +150,8 @@ def _extract(extract_params, calling_function, make_summary_file=True):
             songfiles_list = glob.glob('*.cbin')
         elif extract_params['file_format'] == 'koumura':
             songfiles_list = glob.glob('*.wav')
+        elif extract_params['file_format'] == 'txt':
+            songfiles_list = glob.glob('*.wav')
 
         num_songfiles = len(songfiles_list)
         all_labels = []
@@ -464,6 +466,7 @@ def extract(config_file):
     home_dir = os.getcwd()
 
     todo_list = extract_config['todo_list']
+	
     for ind, todo in enumerate(todo_list):
 
         print('Completing item {} of {} in to-do list'.format(ind+1, len(todo_list)))
@@ -474,6 +477,9 @@ def extract(config_file):
         elif file_format == 'koumura':
             if 'koumura' not in sys.modules:
                 from . import koumura
+        elif file_format == 'txt':
+            if 'txt' not in sys.modules:
+                from . import txt
 
         output_dir = 'extract_output_' + timestamp()
         output_dir_with_path = os.path.join(
@@ -494,6 +500,8 @@ def extract(config_file):
 
         # segment_params defined for todo_list item takes precedence over any default
         # defined for `extract` config
+
+
         if 'segment_params' in todo:
             extract_params['segment_params'] = todo['segment_params']
         else:

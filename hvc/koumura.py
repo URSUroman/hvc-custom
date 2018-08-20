@@ -177,7 +177,8 @@ def load_song_annot(songfile):
                          format(songfile))
     else:
         annot_file = annot_file[0]
-
+		
+		
     seq_list = parse_xml(annot_file, concat_seqs_into_songs=True)
     wav_files = [seq.wavFile for seq in seq_list]
     ind = wav_files.index(songfile)
