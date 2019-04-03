@@ -193,11 +193,22 @@ def validate_segment_params(segment_params):
                            .format(invalid_keys))
     else:
         for key, val in segment_params.items():
-            if key == 'threshold':
-                if type(val) != int:
-                    raise ValueError('threshold should be int but parsed as {}'
-                                     .format(type(val)))
-            elif key == 'min_syl_dur':
+			# When threshold is 'int'
+            # if key == 'threshold':
+            #     if type(val) != int:
+            #         raise ValueError('threshold should be int but parsed as {}'
+            #                          .format(type(val)))
+            # elif key == 'min_syl_dur':
+            #     if type(val) != float:
+            #         raise ValueError('min_syl_dur should be float but parsed as {}'
+            #                          .format(type(val)))
+            # elif key == 'min_silent_dur':
+            #     if type(val) != float:
+            #         raise ValueError('min_silent_dur should be float but parsed as {}'
+            #                          .format(type(val)))
+			
+			# When song data are in txt files, the threshold may not be integer (ex bellow 1)
+            if key == 'min_syl_dur':
                 if type(val) != float:
                     raise ValueError('min_syl_dur should be float but parsed as {}'
                                      .format(type(val)))
@@ -205,6 +216,11 @@ def validate_segment_params(segment_params):
                 if type(val) != float:
                     raise ValueError('min_silent_dur should be float but parsed as {}'
                                      .format(type(val)))
+			
+			
+			
+			
+			
 
 
 def _validate_feature_list(feature_list):

@@ -1,6 +1,7 @@
 valid_file_formats:
   - evtaf
   - koumura
+  - wav_txt
   - txt
 
 required_extract_todo_list_keys:
@@ -66,6 +67,8 @@ optional_predict_todo_list_keys:
 
 valid_convert_types:
   - notmat
+  - wav_txt
+  - txt
 
 must_train_with_prob_true:
   - svm

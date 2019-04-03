@@ -150,8 +150,10 @@ def _extract(extract_params, calling_function, make_summary_file=True):
             songfiles_list = glob.glob('*.cbin')
         elif extract_params['file_format'] == 'koumura':
             songfiles_list = glob.glob('*.wav')
-        elif extract_params['file_format'] == 'txt':
+        elif extract_params['file_format'] == 'wav_txt':
             songfiles_list = glob.glob('*.wav')
+        elif extract_params['file_format'] == 'txt':
+            songfiles_list = glob.glob('*.txt')
 
         num_songfiles = len(songfiles_list)
         all_labels = []
@@ -437,6 +439,7 @@ def _extract(extract_params, calling_function, make_summary_file=True):
 
             joblib.dump(summary_ftr_file_dict,
                         summary_filename)
+						
 
         else:  # if only one feature_file
             os.rename(ftr_output_files[0],
@@ -471,13 +474,16 @@ def extract(config_file):
 
         print('Completing item {} of {} in to-do list'.format(ind+1, len(todo_list)))
         file_format = todo['file_format']
-        if file_format == 'evtaf':
+        if file_format == 'evtaf': #For the case where the song files are in cbin format and the annotations in mat format
             if 'evfuncs' not in sys.modules:
                 from . import evfuncs
-        elif file_format == 'koumura':
+        elif file_format == 'koumura': #For the case where the song files are in wave format and the annotations in xml format
             if 'koumura' not in sys.modules:
                 from . import koumura
-        elif file_format == 'txt':
+        elif file_format == 'wav_txt': #For the case where the song files are in wave format and the annotations in txt format
+            if 'wav_txt' not in sys.modules:
+                from . import wav_txt
+        elif file_format == 'txt': #For the case where the song files are in txt format and the annotations in txt format
             if 'txt' not in sys.modules:
                 from . import txt
 

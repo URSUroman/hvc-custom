@@ -7,7 +7,7 @@ from matplotlib.mlab import specgram
 
 import matplotlib.pyplot as plt
 
-from . import evfuncs, koumura, txt
+from . import evfuncs, koumura, wav_txt, txt
 from .parse.ref_spect_params import refs_dict
 
 
@@ -597,9 +597,11 @@ class Song:
             raw_audio, samp_freq = evfuncs.load_cbin(filename)
         elif file_format == 'koumura':
             samp_freq, raw_audio = wavfile.read(filename)
-        elif file_format == 'txt':
+        elif file_format == 'wav_txt':
             samp_freq, raw_audio = wavfile.read(filename)
             raw_audio = raw_audio.astype(float)
+        elif file_format == 'txt':
+            samp_freq, raw_audio = read_song_txt(filename)
 
         self.rawAudio = raw_audio
         self.sampFreq = samp_freq
@@ -648,6 +650,21 @@ class Song:
                 self.offsets_Hz = song_dict['offsets']  # and offsets
                 self.onsets_s = self.onsets_Hz / self.sampFreq  # so need to convert to seconds
                 self.offsets_s = song_dict['offsets'] / self.sampFreq
+				
+            elif file_format == 'wav_txt':
+                if annote_filename:
+                    song_dict = wav_txt.load_song_annot(annote_filename)
+                else:
+                    try:
+                        song_dict = wav_txt.load_song_annot(filename)
+                    except FileNotFoundError:
+                        print("Could not automatically find an annotation file for {}."
+                              .format(filename))
+                        raise
+                self.onsets_Hz = song_dict['onsets']  # in Koumura annotation.xml files, onsets given in Hz
+                self.offsets_Hz = song_dict['offsets']  # and offsets
+                self.onsets_s = self.onsets_Hz / self.sampFreq  # so need to convert to seconds
+                self.offsets_s = song_dict['offsets'] / self.sampFreq	
 				
             elif file_format == 'txt':
                 if annote_filename:
@@ -896,4 +913,28 @@ class Song:
         if return_spects:
             # stack with dimensions (samples, height, width)
             return np.stack([syl.spect for syl in all_syls], axis=0)
+
+def read_song_txt(filename):
+    samp_freq = 30303.0
+    raw_audio = []
+    with open(filename) as f:
+         lines = f.readlines()
+		 #print(type(lines))
+         #samp_freq = float(lines[0])
+         for line in lines:  #lines[1:-1] considers all elements of lines except the first one 
+             #line = str(lines)
+             #print("line: %s" % line)
+             #splt = line.split("\n")
+             #print("line: %f" % float(line))
+             raw_audio.append(float(line))
+    
+    f.close
+	
+    raw_audio = np.asarray(raw_audio)
+    #raw_audio=rawsong_templ[:,None]
+	
+    return(samp_freq, raw_audio)
+	
+
+
 

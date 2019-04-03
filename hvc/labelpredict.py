@@ -75,6 +75,7 @@ def predict(config_file):
 
         os.chdir(output_dir)
         ftr_files = glob.glob('features_from*')
+        #print(ftr_files)
         model_filename = model_meta_file['model_filename']
         model_name = model_meta_file['model_name']
         if model_name in valid_models['sklearn']:
@@ -123,17 +124,30 @@ def predict(config_file):
                         onsets_s = ftr_file_dict['onsets_s'][these]
                         offsets_s = ftr_file_dict['offsets_s'][these]
                         segment_params = ftr_file_dict['segment_params']
+                        samp_freq = ftr_file_dict['samp_freq'][these]
+                        #samp_freq, raw_audio = wavfile.read(songfile_name)
+
+                        hvc.convert.to_notmat(songfile_name,
+                                              pred_labels,
+                                              model_name,
+                                              samp_freq,
+                                              segment_params,
+                                              onsets_s,
+                                              offsets_s,
+                                              alternate_path=output_dir)
+						
+
+											  
+                elif todo['convert'] == 'wav_txt':
+                    print('converting to .txt files')
+                    for curr_song_id, songfile_name in enumerate(songfiles):
+                        these = np.asarray(songfile_IDs) == curr_song_id
+                        pred_labels = ftr_file_dict['pred_labels'][these]
+                        onsets_s = ftr_file_dict['onsets_s'][these]
+                        offsets_s = ftr_file_dict['offsets_s'][these]
+                        segment_params = ftr_file_dict['segment_params']
                         #samp_freq = ftr_file_dict['samp_freq'][these]
                         samp_freq, raw_audio = wavfile.read(songfile_name)
-
-                        #hvc.convert.to_notmat(songfile_name,
-                        #                      pred_labels,
-                        #                      model_name,
-                        #                      samp_freq,
-                        #                      segment_params,
-                        #                      onsets_s,
-                        #                      offsets_s,
-                        #                      alternate_path=output_dir)
 						
                         hvc.convert.to_txt(songfile_name,
                                               pred_labels,
@@ -143,8 +157,32 @@ def predict(config_file):
                                               onsets_s,
                                               offsets_s,
                                               alternate_path=output_dir)
+				
+                elif todo['convert'] == 'txt':
+                    print('converting to .txt files')
+                    for curr_song_id, songfile_name in enumerate(songfiles):
+                        these = np.asarray(songfile_IDs) == curr_song_id
+                        pred_labels = ftr_file_dict['pred_labels'][these]
+                        onsets_s = ftr_file_dict['onsets_s'][these]
+                        offsets_s = ftr_file_dict['offsets_s'][these]
+                        segment_params = ftr_file_dict['segment_params']
+                        #samp_freq = ftr_file_dict['samp_freq'][these]
+                        #samp_freq, raw_audio = wavfile.read(songfile_name)
 						
+                        samp_freq = 30303.0
+                        #with open(songfile_name) as f:
+                        #     lines = f.readlines()
+		                #     #print(type(lines))
+                        #     samp_freq = float(lines[0])
 						
+                        hvc.convert.to_txt(songfile_name,
+                                              pred_labels,
+                                              model_name,
+                                              samp_freq,
+                                              segment_params,
+                                              onsets_s,
+                                              offsets_s,
+                                              alternate_path=output_dir)	
 						
 
     os.chdir(home_dir)

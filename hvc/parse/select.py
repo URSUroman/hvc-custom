@@ -469,7 +469,7 @@ def validate_yaml(config_path, select_config_yaml):
     select_config_dict : dict
         after validation of all keys
     """
-
+	
     if type(select_config_yaml) is not dict:
         raise ValueError('select_config_yaml passed to parse.extract was '
                          'not recognized as a dict, instead was a {}.'
