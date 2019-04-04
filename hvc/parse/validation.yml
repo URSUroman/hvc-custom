@@ -3,6 +3,7 @@ valid_file_formats:
   - koumura
   - wav_txt
   - txt
+  - npy
 
 required_extract_todo_list_keys:
   - bird_ID

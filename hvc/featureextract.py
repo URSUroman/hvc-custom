@@ -154,6 +154,8 @@ def _extract(extract_params, calling_function, make_summary_file=True):
             songfiles_list = glob.glob('*.wav')
         elif extract_params['file_format'] == 'txt':
             songfiles_list = glob.glob('*.txt')
+        elif extract_params['file_format'] == 'npy':
+            songfiles_list = glob.glob('*.npy')
 
         num_songfiles = len(songfiles_list)
         all_labels = []
@@ -484,6 +486,9 @@ def extract(config_file):
             if 'wav_txt' not in sys.modules:
                 from . import wav_txt
         elif file_format == 'txt': #For the case where the song files are in txt format and the annotations in txt format
+            if 'txt' not in sys.modules:
+                from . import txt
+        elif file_format == 'npy': #For the case where the song files are in npy format and the annotations in txt format
             if 'txt' not in sys.modules:
                 from . import txt
 

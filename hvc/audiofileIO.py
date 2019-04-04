@@ -602,6 +602,8 @@ class Song:
             raw_audio = raw_audio.astype(float)
         elif file_format == 'txt':
             samp_freq, raw_audio = read_song_txt(filename)
+        elif file_format == 'npy':
+            samp_freq, raw_audio = read_song_npy(filename)
 
         self.rawAudio = raw_audio
         self.sampFreq = samp_freq
@@ -667,6 +669,21 @@ class Song:
                 self.offsets_s = song_dict['offsets'] / self.sampFreq	
 				
             elif file_format == 'txt':
+                if annote_filename:
+                    song_dict = txt.load_song_annot(annote_filename)
+                else:
+                    try:
+                        song_dict = txt.load_song_annot(filename)
+                    except FileNotFoundError:
+                        print("Could not automatically find an annotation file for {}."
+                              .format(filename))
+                        raise
+                self.onsets_Hz = song_dict['onsets']  # in Koumura annotation.xml files, onsets given in Hz
+                self.offsets_Hz = song_dict['offsets']  # and offsets
+                self.onsets_s = self.onsets_Hz / self.sampFreq  # so need to convert to seconds
+                self.offsets_s = song_dict['offsets'] / self.sampFreq	
+				
+            elif file_format == 'npy':
                 if annote_filename:
                     song_dict = txt.load_song_annot(annote_filename)
                 else:
@@ -934,6 +951,20 @@ def read_song_txt(filename):
     #raw_audio=rawsong_templ[:,None]
 	
     return(samp_freq, raw_audio)
+	
+def read_song_npy(filename):
+    samp_freq = 30303.0
+    raw_audio = []	
+    raw_audio = np.load(filename)
+    #print(raw_audio.shape)
+	#convert from (M,1) to (M,)
+    raw_audio=np.transpose(raw_audio)
+    #print(raw_audio.shape)
+    raw_audio = raw_audio[0,:]
+    #print(raw_audio.shape)
+
+    return(samp_freq, raw_audio)
+
 	
 
 
